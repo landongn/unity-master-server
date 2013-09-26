@@ -1,0 +1,63 @@
+#! /bin/sh
+#
+# unity-masterserver
+#
+# Author:	Unity Technologies
+#
+# chkconfig:    2345 98 02
+# description:  A directory service for registering and polling
+#               Unity game hosts.
+# processname:  MasterServer
+# pidfile:      /home/unityserver/Production/MasterServer/MasterServer.pid
+# config:       /etc/monitrc
+#
+# ------------------------------------
+# Change this to suit your setup
+
+BINARYNAME=MasterServer
+OPTIONS="-s 3600"
+
+HOMEDIR=/home/unityserver/Production/MasterServer
+COMMAND="./${BINARYNAME} -d ${OPTIONS}"
+USERNAME=unityserver
+
+# ------------------------------------
+
+RETVAL=0
+
+# See how we were called.
+case "$1" in
+  start)
+	[ -f ${HOMEDIR}/${BINARYNAME}.pid ] && echo $BINARYNAME already running && exit 0
+	echo -n "Starting $BINARYNAME: "
+        su $USERNAME -c "cd ${HOMEDIR} && ${COMMAND}"
+	RETVAL=$?
+        echo
+	[ $RETVAL = 0 ] && touch /var/lock/subsys/$BINARYNAME
+	;;
+  stop)
+        echo -n "Stopping $BINARYNAME: "
+	cat ${HOMEDIR}/${BINARYNAME}.pid | xargs kill
+	RETVAL=$?
+        echo
+	[ $RETVAL = 0 ] && rm -f /var/lock/subsys/BINARYNAME
+        ;;
+  restart)
+  	$0 stop
+	sleep 5
+	$0 start
+	RETVAL=$?
+	;;
+  condrestart)
+       [ -e /var/lock/subsys/$BINARYNAME ] && $0 restart
+       ;;
+  status)
+        status $BINARYNAME
+	RETVAL=$?
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart|condrestart|status}"
+	exit 1
+esac
+
+exit $RETVAL

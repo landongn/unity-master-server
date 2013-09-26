@@ -1,0 +1,13 @@
+Unity Master Server
+
+2.0.1f1 (25 Feb 2011)
+
+- (common) Added option for launching to background (daemon mode) on Linux.
+- (common) PID file now written after launch.
+- (common) Launch script for Linux added (start/stop/restart), see config/unity-masterserver.
+- (common) Command line parameters modified to match the other servers.
+- (common) All servers now use same logging facility
+
+2.0.0f1 (22 Sep 2011)
+
+- (common) Upgraded to use RakNet version 3.72
